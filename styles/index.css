@@ -1,0 +1,101 @@
+.slidev-layout {
+  position: relative;
+}
+
+.slidev-layout::after {
+  content: "";
+  position: absolute;
+  right: 30px;
+  top: 5px;
+  display: block;
+  width: 196px;
+  height: 90px;
+  background: url("../img/logo.png") no-repeat center/contain;
+  opacity: 0.18;
+  pointer-events: none;
+  user-select: none;
+  z-index: 9999;
+}
+
+.slidev-layout.cover.title-slide {
+  background-image: url("../img/back.png") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
+.slidev-layout.cover.title-slide > div {
+  box-sizing: border-box;
+  width: 100%;
+  padding-left: clamp(200px, 19vw,250px);
+  padding-right: 0;
+}
+
+.slidev-layout.cover.title-slide h1,
+.slidev-layout.cover.title-slide h2,
+.slidev-layout.cover.title-slide .leading-8 {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+}
+
+/* 只作用于封面页（title-slide） */
+.title-slide {
+  color: #000 !important;
+}
+
+/* 覆盖标题 */
+.title-slide h1{
+  color:  #2747af !important;
+  font-weight: 700 !important;
+  font-size: 35px !important;
+}
+
+/* 覆盖所有文本 */
+.title-slide * {
+  color: #000 !important;
+}
+
+.slidev-layout.cover.title-end {
+  background-image: url("../img/back-left.png") !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
+/* 覆盖标题 */
+.title-end h1{
+  color: #2747af !important;
+  font-weight: 700 !important;
+  font-size: 70px !important;
+}
+
+/* 覆盖所有文本 */
+.title-end * {
+  color: #504d4d !important;
+}
+
+.slidev-layout.cover.title-end > div {
+  box-sizing: border-box;
+  width: 100%;
+  padding-left: clamp( 280px, 19vw,340px);
+  padding-right: clamp(10px, 2vw, 20px);
+}
+
+.slidev-layout.default::before,
+.slidev-layout.two-columns::before {
+  content: "";
+  position: absolute;
+  top: 40px;
+  left: 24px;
+  display: block;
+  width: 45px;
+  height: 38px;
+  background: url("../img/icon.png") no-repeat center/contain;
+  pointer-events: none;
+  user-select: none;
+  z-index: 20;
+}
+
+.slidev-layout.default h1,
+.slidev-layout.two-columns h1 {
+  transform: translateX(28px);
+}
