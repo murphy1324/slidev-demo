@@ -31,7 +31,7 @@ jobs:
         run: npm ci
 
       - name: Build Slidev
-        run: npx slidev build --base /你的仓库名/ --without-notes
+        run: npx slidev build --base /slidev-demo/
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
