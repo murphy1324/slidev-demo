@@ -401,11 +401,6 @@ layout: two-cols
 ::right::
 
 <div class="w-full flex items-center justify-center mt-5">
-  <!-- <video
-    src="./video/chart_end.mp4"
-    controls
-    class="w-full object-cover bg-transparent outline-none autoplay"
-  ></video> -->
     <img
     src="./img/chat.png"
     alt="系统架构图"
@@ -501,7 +496,7 @@ layout: two-cols
 
 ::right::
 
-<div class="w-full flex items-center justify-center mt-15">
+<div class="w-full flex items-center justify-center mt-15 ml-5">
   <video
     src="./video/chart_end.mp4"
     autoplay
