@@ -1,7 +1,6 @@
 ---
 theme: seriph
 layout: cover
-background: ./img/back.png
 title: 自然语言驱动超算使用过程的交互设计与实现
 info: |
   ## 毕业设计中期答辩
