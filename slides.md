@@ -305,9 +305,9 @@ layout: two-cols
 </div>
 
 <!--
-我的工作重点在于前端交互层，以及前后端之间的协议消费和状态组织。
-
-技术栈方面，前端基于 Next.js 和 React 构建，通过 SSE 来承载智能体的流式执行过程。
+我的工作重点有两个
+一个是前后端之间的协议消费和状态组织的设计，通过 SSE 来承载智能体的流式执行过程
+另一个是前端交互层的落地实现，基于 Next.js 和 React 构建
 -->
 
 ---
@@ -341,15 +341,61 @@ Agentic UI 是一种面向 AI Agent 的交互界面设计方式：用户给出�
 </div>
 
 <!--
+对于第一个重点流式协议设计
+
 我的工作是实现项目中一整套Agentic-UI的流程
 
-界面要让用户看得见过程，也能在关键节点参与控制。
+用户能看得见任务的整个过程，还能在关键节点参与控制
 
-这是这个系统前端和传统聊天页面相比，一个比较关键的区别。
+Agentic-UI这是这个系统前端和传统聊天页面相比，一个比较关键的区别。
 
-其中，协议设计和分流是它的一个关键设计点。
+其中，协议设计和分流是它的关键设计点。
 -->
 
+---
+layout: two-cols
+---
+
+# 流式协议设计
+AG-UI：事件驱动的 Agent-User 通信协议
+
+
+### 核心事件
+<div class="mt-2 ml-6 flex flex-col gap-8 items-center">
+  <img
+    src="./figures/SSE_flow.png"
+    alt="SSE 事件流"
+    class="w-[115%] max-w-none object-contain"
+  />
+</div>
+
+人在回路：通过 ask 与 resume 实现暂停与恢复
+
+::right::
+
+<div class="mt-20 ml-15 flex flex-col">
+
+### 任务状态
+
+</div>
+
+
+<div class="ml-10 flex flex-col items-center">
+
+  <img
+    src="./figures/status_flow_new.png"
+    alt="任务状态流转"
+    class="w-[65%] max-w-none object-contain"
+  />
+</div>
+
+<!--
+协议方面
+
+我设计了一套应用层事件协议，将智能体的规划与执行过程结构化为一系列事件，并通过流式方式推送到前端进行展示
+
+其中，人在回路机制主要通过 ask 和 resume 事件来实现
+-->
 ---
 layout: two-cols
 ---
@@ -389,277 +435,309 @@ layout: two-cols
 分流方面
 
 前端不会简单把后端所有输出都当作普通文本展示，
-而是根据语义进行分流，让最终回答、过程日志、用户交互和图表结果，
-让他们分别进入合适的展示区域。
+而是根据语义进行分流，让最终回答、过程日志、用户交互和图表结果分别进入合适的展示区域。
+-->
 
-结果去答案区，日志去时间线，确认信息进交互卡片，图表进 Data Board。
+
+---
+transition: none
+---
+
+# 前端界面设计
+
+### 页面组织
+
+  <div class="flex flex-row items-center gap-3">
+    <img
+      src="./figures/login.png"
+      alt="主工作区"
+      class="w-[30%] max-w-none object-contain"
+    />
+    <img
+      src="./figures/workspace_with_history_and_data_board.png"
+      alt="主工作区"
+      class="w-[70%] max-w-none object-contain"
+    />
+  </div>
+
+<!--
+关于第二个重点前端界面设计
+
+我的前端界面总体如图所示
 -->
 
 ---
 layout: two-cols
 ---
 
-# 流式协议与任务状态设计
-AG-UI：事件驱动的 Agent-User 通信协议
+# 前端界面设计
 
+### 页面组织
 
-### 核心事件
-<div class="mt-2 ml-6 flex flex-col gap-8 items-center">
-  <img
-    src="./figures/SSE_flow.png"
-    alt="SSE 事件流"
-    class="w-[115%] max-w-none object-contain"
-  />
-</div>
+- 登录页：仿照 SSH 远程连接方式，输入 IP、账户、密码、端口
+- 左侧折叠栏：历史记录与会话切换
+- 下方输入区：自然语言输入、模型选择、技能选择
+- 中间区域：文本回答 + 任务卡片 + 过程时间线
+- 右侧折叠栏：Data Board，集中渲染图表
 
-人在回路：通过 ask 与 resume 实现暂停与恢复
+<br></br>
+
+### 关键工作
+
+- 事件协议消费与分流
+- 任务卡片与交互卡片设计
+- 任务状态管理与历史恢复
+- 图表入口与 Data Board 联动
 
 ::right::
 
-<div class="mt-20 ml-15 flex flex-col">
+  <div class="flex flex-col items-left gap-2">
+    <img
+      src="./figures/login.png"
+      alt="主工作区"
+      class="w-[40%] max-w-none object-contain"
+    />
+    <img
+      src="./figures/workspace_with_history_and_data_board.png"
+      alt="主工作区"
+      class="w-[96%] max-w-none object-contain"
+    />
+  </div>
 
-### 任务状态
+<!--
+登录页仿造了SSH远程连接的方式，通过IP、账户、密码和端口登录
 
-</div>
+主界面包含聊天框、历史记录面板和数据面板
+-->
 
+---
 
-<div class="ml-10 flex flex-col items-center">
+# 前端界面设计
 
+### 组件与状态流
+
+<div class="flex justify-center">
   <img
-    src="./figures/status_flow_new.png"
-    alt="任务状态流转"
-    class="w-[65%] max-w-none object-contain"
+    src="./figures/frontend_component_state_flow.png"
+    alt="前端组件与状态流"
+    class="w-[95%] object-contain"
   />
 </div>
 
 <!--
-协议方面
+细化到组件设计
 
-我设计了一套应用层事件协议，将智能体的规划与执行过程结构化为一系列事件，并通过流式方式推送到前端进行展示
+如图是组件和状态流的示意图
+
+主要有页面布局入口、用户交互、协议与状态管理，任务与图标渲染这四类组件
+
+箭头体现了页面、状态、协议、图表渲染之间协同工作的流程
 -->
 
----
-layout: two-cols
----
-# 流式协议与任务状态设计
-
-### 任务状态
-
-<div class="ml-5 text-[12px] leading-5">
-
-- waiting_user
-- pending
-- running
-- success
-- fail
-- cancelled
-
-</div>
-
-::right::
-
-
-  <div class="mt-15 flex flex-col gap-8 items-center">
-    <img
-      src="./figures/status_flow.png"
-      alt="任务状态流转"
-      class="w-[125%] max-w-none object-contain"
-    />
-    <img
-      src="./figures/SSE_flow.png"
-      alt="SSE 事件流"
-      class="w-[115%] max-w-none object-contain"
-    />
-  </div>
 ---
 layout: section
 ---
 
 # 个人工作与实现结果
 
----
-
-# 我负责的前端交互落地
-
-<div class="grid grid-cols-[1.05fr_0.95fr] gap-8 items-center mt-4">
-  <div>
-    <img
-      src="./figures/workspace_with_history_and_data_board.png"
-      alt="主工作区"
-      class="w-full object-contain rounded"
-    />
-  </div>
-  <div class="text-[15px] leading-7">
-    <div class="font-600 text-lg mb-2">界面组织</div>
-    <ul>
-      <li>登录页：仿照 SSH 远程连接方式，输入 IP、账户、密码、端口</li>
-      <li>左侧折叠栏：历史记录与会话切换</li>
-      <li>下方输入区：自然语言输入、模型选择、技能选择</li>
-      <li>中间区域：文本回答 + 任务卡片 + 过程时间线</li>
-      <li>右侧折叠栏：Data Board，集中渲染图表</li>
-    </ul>
-    <div class="font-600 text-lg mt-4 mb-2">我完成的关键工作</div>
-    <ul>
-      <li>事件协议消费与分流</li>
-      <li>任务卡片与交互卡片设计</li>
-      <li>任务状态管理与历史恢复</li>
-      <li>图表入口与 Data Board 联动</li>
-    </ul>
-  </div>
-</div>
-
 <!--
-这一页对应我最核心的工作。
-我负责把智能体过程变成一个可用的前端工作区：
-左边看历史，中间看任务流，下面发起请求，右边查看图表。
-整个界面是围绕智能体任务协作来设计的。
--->
-
----
-
-# 前端组件与状态流
-
-<div class="mt-4 flex justify-center">
-  <img
-    src="./figures/frontend_component_state_flow.png"
-    alt="前端组件与状态流"
-    class="w-[90%] object-contain"
-  />
-</div>
-
-<div class="mt-5 text-[15px] leading-7">
-  这张图对应我在 <code>agent_front</code> 中完成的真实实现结构：页面与布局组件组织工作区，<code>useChat</code> 和状态仓库负责消费 SSE 事件并维护任务状态，任务卡片与图表组件负责把过程日志、交互请求和可视化结果渲染到界面中。
-</div>
-
-<!--
-这一页不是概念图，而是基于真实前端项目整理出来的组件和状态流。
-它体现的是：页面、状态、协议、图表渲染之间是如何协同工作的。
-这也是我在工程实现中最有代表性的部分。
+接下来是成果展示
 -->
 
 ---
 layout: two-cols
 ---
 
-# 典型场景一：自然语言查询与图表展示
+# 总体任务流效果
 
-### 示例任务
 
-“查询 2025 年 CPU 机时使用情况，并绘制趋势图”
+演示场景：用户输入“帮我提交 agenttest 目录下任务”
 
-### 实现过程
 
-- 用户以自然语言发起请求
-- 智能体规划查询步骤并执行统计
-- 后端通过 <code>chart</code> 事件直接返回 Vega-Lite 图表 JSON
-- 前端将图表写入任务卡片并同步到 Data Board
-
-### 结果特点
-
-- 结论与过程同时可见
-- 图表规范结构化、可复用
-- 图表显示不依赖前端手写每一种图形逻辑
+### 展示内容
+- 自然语言输入
+  > 用户直接以任务目标来表达需求
+- 智能体规划与执行
+  > 后端根据目标拆分步骤并选择合适能力
+- 前端展示任务卡片与时间线
+  > 将执行过程实时反馈给用户
+- 用户参与关键决策
+  > 例如文件选择、资源配置确认等
+- 最终得到结果
+  > 给出任务提交反馈与状态结果
 
 ::right::
 
-<div class="pt-6 flex items-center justify-center">
-  <img
-    src="./figures/data_board_detail.png"
-    alt="Data Board 图表展示"
-    class="w-[96%] object-contain rounded"
-  />
+<div class="w-full flex items-center justify-center mt-3 ml-2">
+  <video
+    src="./video/total.mp4"
+    autoplay
+    muted
+    loop
+    class="w-full object-cover bg-transparent outline-none"
+  ></video>
 </div>
 
 <!--
-这个场景体现的是运行数据分析闭环。
-用户提出自然语言问题后，系统不仅返回文字结论，还返回结构化图表。
-这里需要强调，图表不是前端从文本里猜出来的，而是后端通过 chart 事件按约定直接返回 Vega-Lite 规范。
+这里展示的是一个完整的任务流示例。
+
+用户输入自然语言后，
+
+智能体会先理解任务目标，然后进行规划执行，按照协议规范实时向前端推送数据流
+
+前端根据分流策略将数据分发到不同的组件，实时展示任务推进过程
+
+在关键步骤，系统会请求用户确认或补充参数，
+用户完成交互之后，任务继续推进，最终得到结果。
+
+接下来，我会分别展开说明聊天、交互和图表这三个关键机制。
 -->
 
 ---
 layout: two-cols
 ---
 
-# 典型场景二：人在回路的任务提交
+# 聊天系统与任务卡片
+Agentic UI 实现
 
-### 示例任务
 
-“帮我提交某目录下的任务”
+### 展示机制
+- 支持多轮对话与流式渲染
+  > 用户可以连续提出问题，系统逐步返回内容
+- 执行过程抽象为任务卡片
+  > 将后端行为转成更易理解的前端表达
+- 展示状态、进度和日志
+  > 让用户知道任务进行到哪一步、当前在做什么
+- 最终结果高亮展示
+  > 将结果与过程区分开，提升可读性
 
-### 过程特点
+<div><br/></div>
 
-- 系统识别这是带风险的操作，不直接替用户完成
-- 对缺失参数和关键资源进行确认
-- 通过交互卡片暂停任务，等待用户输入
-- 用户提交后，通过 <code>resume</code> 恢复原有上下文继续执行
-
-### 价值
-
-- 保留自然语言交互的便利性
-- 避免高风险场景下系统“自作主张”
-- 提升过程透明度与可控性
+### 历史任务回放
+- 可视化历史任务执行过程，恢复任务时间线
+  > 用户后续可以回看任务执行的脉络
 
 ::right::
 
-<div class="pt-6 flex flex-col gap-3 items-center">
-  <img
-    src="./figures/chat_interation_1.png"
-    alt="文件选择交互"
-    class="w-[88%] object-contain rounded"
-  />
-  <img
-    src="./figures/chat_end.png"
-    alt="提交成功结果"
-    class="w-[88%] object-contain rounded"
+<div class="w-full flex items-center justify-center mt-5">
+    <img
+    src="./img/chat.png"
+    alt="系统架构图"
+    class="h-full object-contain"
   />
 </div>
 
 <!--
-这个场景体现的是 ask 到 resume 的闭环。
-对于作业提交这类风险操作，系统不会直接执行到底，而是在关键节点停下来，请用户确认文件、资源参数等信息。
-这样智能体是主动的，但控制权仍然在用户手中。
+关于聊天系统，有两个重点
+
+第一，聊天本身是流式的，响应会实时展示；
+第二，执行过程被抽象成任务卡片，
+用户可以直观地看到每一步的状态和日志。
+
+另外，系统也支持历史任务回放，用户可以回看之前任务的执行过程。
 -->
 
 ---
+layout: two-cols
+---
 
-# 新增能力：围绕图表继续追问
+# 交互式任务流
+Agentic UI 实现
 
-<div class="grid grid-cols-[1fr_1fr] gap-8 items-center mt-4">
-  <div class="text-[15px] leading-7">
-    <div class="font-600 text-lg mb-2">实现方式</div>
-    <ul>
-      <li>前端引入 CopilotKit</li>
-      <li>自动包装当前图表规范、图表上下文和会话摘要</li>
-      <li>用户可继续用自然语言描述修改需求</li>
-      <li>系统返回新的 Vega-Lite 规范并重新渲染</li>
-    </ul>
-    <div class="font-600 text-lg mt-4 mb-2">支持的追问类型</div>
-    <ul>
-      <li>修改图表类型，如折线图改为柱状图</li>
-      <li>调整筛选范围、时间粒度或分组维度</li>
-      <li>围绕当前结果继续分析和解释</li>
-    </ul>
-    <div class="font-600 text-lg mt-4 mb-2">意义</div>
-    <div>
-      Data Board 不再是静态展示区域，而成为可持续交互的分析空间。
-    </div>
-  </div>
 
-  <div class="flex items-center justify-center">
-    <img
-      src="./figures/data_board_detail.png"
-      alt="围绕图表继续追问"
-      class="w-[96%] object-contain rounded"
-    />
-  </div>
+### 用户参与决策
+- 表单交互：适合补充参数、填写任务信息
+- 文件选择：在多个候选输入之间进行确认
+- 参数选择：资源配置、节点数等运行参数
+- 混合输入：同时支持文本输入与选项选择
+
+<div><br/></div>
+
+### 交互价值：协作式执行任务
+- 将关键决策节点交还给用户
+  > 避免系统在不确定情况下直接替用户做决定
+- 保留推荐能力，同时允许人工修正
+  > 用户可以接受推荐，也可以自行调整
+- 形成“系统规划 + 用户确认”的协作闭环
+  > 兼顾自动化程度与可控性
+
+::right::
+
+<div class="w-full flex flex-col items-center justify-center mt-5">
+  <img
+    src="./img/inter1.png"
+    alt="交互1"
+    class="h-full object-contain"
+  />  
+  <img
+    src="./img/inter2.png"
+    alt="交互2"
+    class="h-full object-contain mt-2"
+  />
 </div>
 
 <!--
-这是结期阶段最重要的一个新增点。
-系统现在已经支持围绕图表继续追问，而不是只生成一张静态图。
-通过 CopilotKit，当前图表上下文会被自动包装，用户可以继续用自然语言说“改成柱状图”“按队列分组”等，
-系统再返回新的图表规范完成更新。
+关于交互这块，
+
+重点在于系统不是单向问答，而是协作式执行。
+
+智能体会分析任务过程中的关键步骤，
+并在这些节点请求用户确认或补充信息。
+
+比如在这个示例里，
+系统会在选择可执行文件、设置资源配置等环节发起交互，
+同时给出一些推荐选项。
+
+用户可以直接采用推荐，也可以自己调整。
+
+系统把关键决策保留给了用户，
+形成了一个完整的协作闭环。
 -->
+
+---
+layout: two-cols
+transition: none
+---
+
+# 图表展示交互
+Agentic UI 实现
+
+### Data Board 面板
+- 识别 Vega-Lite 并进行展示
+  > 智能体返回结构化图表后，前端自动渲染
+- **“chat with data”**
+  > 用户可以基于当前图表继续提问和分析
+- 系统自动包装图表上下文发送给智能体
+  > 减少用户重复描述上下文的成本
+
+<div><br/></div>
+
+
+::right::
+
+<div class="w-full flex items-center justify-center mt-15 ml-5">
+  <video
+    src="./video/chart_end.mp4"
+    autoplay
+    muted
+    loop
+    class="w-full object-cover bg-transparent outline-none"
+  ></video>
+</div>
+
+<!--
+在可视化方面，
+系统可以识别智能体返回的 Vega-Lite 结果，并在 Data Board 中自动展示。
+
+同时，用户还可以围绕当前图表继续发起交互，
+
+比如，用户说“改成柱状图”“按季度分组”等
+
+系统引入的 CopilotKit 会自动包装图表上下文发送给智能体，智能体再返回新的图表规范完成更新
+
+从而支持“基于图表继续分析”这样的chat with data的使用方式。
+-->
+
 
 ---
 
