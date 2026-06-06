@@ -156,8 +156,6 @@ KeyPoint：信息分散 高门槛
 <!--
 所以这个课题要解决的问题是，如何让用户更自然、更低门槛地使用超算
 
-
-把“表达需求”和“完成任务”之间的距离缩短，将使用门槛从“会不会使用超算指令”转变为“能不能表达需求”
 -->
 
 ---
@@ -169,7 +167,7 @@ KeyPoint：AG-UI（Agentic UI） 交互 可视化任务流
 
 工作定位：实现用户与系统之间的协作关系
 
-- 团队层面：探索“自然语言驱动超算使用”的新范式
+- 团队层面：探索“自然语言驱动超算使用”的**范式改变**
 - 我的重点：完成这一范式的**交互落地**
 
 核心思路：以 **Agentic UI** 为交互范式，围绕智能体设计用户界面，使系统能够理解用户目标、规划步骤并执行任务，同时让用户在关键节点保持监督和控制权。
@@ -194,8 +192,6 @@ KeyPoint：AG-UI（Agentic UI） 交互 可视化任务流
 我的目标是，通过Agentic UI的交互范式，围绕智能体来设计用户界面，强调系统主动理解目标、规划步骤并执行任务
 从而实现用户与系统之间的协作关系，提升用户使用体验
 
-简单来说，我所在的团队在做“范式改变”，而其中我在做“交互落地”
-
 -->
 
 ---
@@ -207,15 +203,16 @@ KeyPoint：降低门槛 人在回路
   > 用户不需要先学习 Shell、Slurm 调度器 和 平台使用方法
 - 系统根据用户需要，自动完成数据查询、统计分析和可视化展示
   > 将“理解问题—调用能力—返回结果”这一过程自动化
-- 将智能体执行过程转化为可交互、可追踪的前端任务流程
+- 提升过程透明度，将智能体执行过程转化为可交互、可追踪的前端任务流程
   > 用户能够与任务流进行交互，提升使用体验
+- 保留人在回路控制
+  > 在参数缺失、风险操作等关键节点请求用户确认，保持用户的监督和控制权
 
-用户直接描述需求，系统自动完成：
+<!-- 
+课题意义简单来说
 
-- 任务理解与步骤规划
-- 运行数据查询与统计分析
-- 图表生成与结果展示
-- 必要的人在回路确认
+就是把“表达需求”和“完成任务”之间的距离缩短，将使用门槛从“会操作”转换为“会表达”
+ -->
 
 ---
 layout: section
@@ -223,44 +220,94 @@ layout: section
 
 # 系统方案与关键设计
 
+<!--
+接下来的章节我会介绍这个系统的总体设计与技术方案
+-->
+
+---
+layout: two-cols
+transition: none
 ---
 
-# 系统总体架构
+# 系统总体架构与技术栈
 
-<div class="grid grid-cols-[1.05fr_0.95fr] gap-8 items-center mt-4">
-  <div>
-    <img
-      src="./figures/architecture.png"
-      alt="系统总体架构"
-      class="w-full object-contain"
-    />
-  </div>
-  <div class="text-[15px] leading-7">
-    <div class="font-600 text-lg mb-2">架构分层</div>
-    <ul>
-      <li>底层资源层：任务调度、运行数据处理、计算节点</li>
-      <li>智能体处理层：自然语言理解、任务规划、工具调用</li>
-      <li>状态与渲染层：任务状态管理、图表渲染、结果组织</li>
-      <li>前端交互层：聊天页面、任务卡片、Data Board、Markdown 展示</li>
-    </ul>
-    <div class="font-600 text-lg mt-4 mb-2">设计重点</div>
-    <ul>
-      <li>不是只返回答案，而是返回“过程 + 结果”</li>
-      <li>不是单一聊天界面，而是任务流式交互界面</li>
-      <li>让自然语言、执行日志、交互确认和图表结果协同出现</li>
-    </ul>
-  </div>
+### 架构分层
+1. 前端交互层：聊天页面、任务卡片、Data Board、Markdown 展示
+   > 负责用户可见界面的组织与切换，将不同类型的信息映射到不同的前端组件中
+2. 状态层：任务状态管理、图表渲染、结果组织
+   > 统一管理会话过程中的前端状态
+3. 协议层：SSE 事件解析、交互 prompt、图表解析
+   > 负责把后端智能体发送来的流式消息转成可消费的结构化事件
+4. 资源层：任务调度、运行数据处理、计算节点
+   > 超算平台拥有的各项资源
+
+
+::right::
+
+<div class="w-full flex ml-6 mt-8 items-center justify-center">
+  <img
+    src="./figures/architecture.png"
+    alt="系统架构图"
+    class="w-full h-full object-contain"
+  />
 </div>
 
 <!--
-系统整体可以分成四层。
+整体架构的分为前端交互层、状态层、协议层和资源层，
 
-- 底层是超算资源和运行数据，
-- 上层是自然语言理解和智能体任务组织，
+- 底层是超算资源和运行数据，智能体理解自然语言，根据资源层的信息组织任务
+- 上层是协议层，解析后端发来的流式消息
 - 再往上是状态管理和图表渲染，
 - 最终由前端界面承接交互
 
-我的工作重点位于前端交互层，以及前后端之间的协议消费和状态组织。
+-->
+
+---
+layout: two-cols
+---
+
+# 系统总体架构与技术栈
+
+### 架构分层
+1. 前端交互层：聊天页面、任务卡片、Data Board、Markdown 展示
+   > 负责用户可见界面的组织与切换，将不同类型的信息映射到不同的前端组件中
+2. 状态层：任务状态管理、图表渲染、结果组织
+   > 统一管理会话过程中的前端状态
+3. 协议层：SSE 事件解析、交互 prompt、图表解析
+   > 负责把后端智能体发送来的流式消息转成可消费的结构化事件
+4. 资源层：任务调度、运行数据处理、计算节点
+   > 超算平台拥有的各项资源
+
+
+::right::
+
+<div><br/></div>
+<div><br/></div>
+
+<div class="ml-8">
+
+### 技术栈
+
+</div>
+
+<div class="scale-70 origin-top-left ml-8">
+
+| 类别 | 技术方案 |
+|---|---|
+| 前端框架 | Next.js 15 + React 19 |
+| 语言 | TypeScript |
+| UI 组件 | MUI |
+| 状态管理 | Zustand |
+| 流式协议 | `@microsoft/fetch-event-source` |
+| 图表渲染 | Vega-Lite / vega-embed |
+| 部署方式 | 静态导出 + Nginx |
+
+</div>
+
+<!--
+我的工作重点在于前端交互层，以及前后端之间的协议消费和状态组织。
+
+技术栈方面，前端基于 Next.js 和 React 构建，通过 SSE 来承载智能体的流式执行过程。
 -->
 
 ---
@@ -269,44 +316,38 @@ layout: two-cols
 
 # 流式协议设计
 
-### Agentic UI：从问答到任务协作
-
-Agentic UI 是一种面向 AI Agent 的交互界面设计方式：用户给出目标，智能体负责规划、调用工具和执行任务，前端负责展示过程、状态、确认和结果。
-
-<div><br/></div>
-
-### 为什么不能只做普通聊天框
-
-- 智能体执行过程包含规划、工具调用、日志输出、用户确认、图表生成等多类信息
-- 如果全部压缩为线性文本，用户难以判断系统正在做什么
-- 超算任务存在风险操作和缺失参数，需要明确的交互入口
-
-<div><br/></div>
 
 ### 设计目标
 
 让用户始终知道系统正在做什么、下一步需要自己做什么，以及任务异常后可以从哪里恢复。
 
+### 实现Agentic UI
+
+Agentic UI 是一种面向 AI Agent 的交互界面设计方式：用户给出目标，智能体负责规划、调用工具和执行任务，前端负责展示过程、状态、确认和结果。
+
+让 agent 后端和前端通过一套标准化事件流实时通信，把消息、工具调用、状态更新、生命周期事件等持续同步到界面
+
+
+<div><br/></div>
+
 ::right::
 
-<div class="pt-8 text-[15px] leading-7">
-  <div class="font-600 text-lg mb-3">界面需要承接的过程信息</div>
-  <ul>
-    <li>规划：系统如何拆解用户目标</li>
-    <li>执行：当前正在调用什么工具、处理什么数据</li>
-    <li>确认：哪些节点需要用户补充参数或批准</li>
-    <li>结果：最终回答、图表和可继续分析的数据</li>
-  </ul>
-  <div class="mt-6 text-[14px] leading-6 opacity-85">
-    因此，前端不能只把智能体输出当作一段文本渲染，而要把它组织成任务过程。
-  </div>
+<div class="pt-8 flex flex-col gap-4 items-center">
+  <img
+    src="./figures/data_flow_strategy.png"
+    alt="数据分流策略"
+    class="w-[82%] object-contain"
+  />
 </div>
 
 <!--
-这里介绍 Agentic UI 作为一种交互设计范式。
-它不是一个更好看的聊天框，而是围绕智能体执行过程设计的任务界面。
-用户给出目标之后，智能体会进行规划、调用工具和执行任务；前端要把过程、状态、确认和结果组织出来。
-所以这一页强调：界面要让用户看得见过程，也能在关键节点参与控制。
+我的工作是实现项目中一整套Agentic-UI的流程
+
+界面要让用户看得见过程，也能在关键节点参与控制。
+
+这是这个系统前端和传统聊天页面相比，一个比较关键的区别。
+
+其中，协议设计和分流是它的一个关键设计点。
 -->
 
 ---
@@ -318,9 +359,13 @@ layout: two-cols
 ### 前端分流策略
 
 - 最终回答：进入答案区
+> 保证用户能快速找到结论
 - 过程日志：进入任务时间线
+> 展示任务推进过程与关键节点
 - 用户交互：进入交互卡片
+> 便于用户直接确认、选择或补充参数
 - 图表结果：进入 Data Board
+> 集中展示可视化结果
 
 <div><br/></div>
 
@@ -341,58 +386,91 @@ layout: two-cols
 </div>
 
 <!--
-在具体实现上，我把流式事件按照语义进行分流：
+分流方面
+
+前端不会简单把后端所有输出都当作普通文本展示，
+而是根据语义进行分流，让最终回答、过程日志、用户交互和图表结果，
+让他们分别进入合适的展示区域。
+
 结果去答案区，日志去时间线，确认信息进交互卡片，图表进 Data Board。
-这样界面围绕智能体组织，而不是围绕单条文本组织。
 -->
 
 ---
+layout: two-cols
+---
 
 # 流式协议与任务状态设计
+AG-UI：事件驱动的 Agent-User 通信协议
 
-<div class="grid grid-cols-[0.92fr_1.08fr] gap-6 mt-2">
-  <div class="text-[15px] leading-7">
-    <div class="font-600 text-lg mb-2">流式协议</div>
-    <ul>
-      <li>接口：<code>POST /ai/chat/stream</code></li>
-      <li>机制：基于 SSE 持续推送任务事件</li>
-      <li>协议背景：AG-UI 是事件驱动的 Agent-User 通信协议</li>
-      <li>核心事件：<code>chat_begin</code>、<code>status</code>、<code>tool_call</code>、<code>tool_result</code>、<code>delta</code>、<code>message</code>、<code>chart</code>、<code>chat_error</code></li>
-      <li>人在回路：通过 <code>ask -&gt; resume</code> 实现暂停与恢复</li>
-    </ul>
-    <div class="font-600 text-lg mt-4 mb-2">任务状态</div>
-    <ul>
-      <li><code>waiting_user</code></li>
-      <li><code>pending</code></li>
-      <li><code>running</code></li>
-      <li><code>success</code></li>
-      <li><code>fail</code></li>
-      <li><code>cancelled</code></li>
-    </ul>
-  </div>
 
-  <div class="flex flex-col gap-3 items-center">
-    <img
-      src="./figures/SSE_flow.png"
-      alt="SSE 事件流"
-      class="w-[92%] object-contain"
-    />
-    <img
-      src="./figures/status_flow.png"
-      alt="任务状态流转"
-      class="w-[76%] object-contain"
-    />
-  </div>
+### 核心事件
+<div class="mt-2 ml-6 flex flex-col gap-8 items-center">
+  <img
+    src="./figures/SSE_flow.png"
+    alt="SSE 事件流"
+    class="w-[115%] max-w-none object-contain"
+  />
+</div>
+
+人在回路：通过 ask 与 resume 实现暂停与恢复
+
+::right::
+
+<div class="mt-20 ml-15 flex flex-col">
+
+### 任务状态
+
+</div>
+
+
+<div class="ml-10 flex flex-col items-center">
+
+  <img
+    src="./figures/status_flow_new.png"
+    alt="任务状态流转"
+    class="w-[65%] max-w-none object-contain"
+  />
 </div>
 
 <!--
-前后端协作的核心，是用 SSE 持续同步智能体任务过程。
-从协议思想上看，AG-UI 提供的是 Agent 后端和用户前端之间的事件驱动通信思路。
-在我的实现中，后端通过 SSE 推送自定义任务事件，前端再把这些事件映射到答案区、任务时间线、交互卡片和 Data Board。
-SSE 负责把事件按时间推给前端，状态机负责把这些事件归并成 waiting_user、running、success 等任务状态。
-这样一来，不管是查询任务、作业提交还是图表生成，前端都可以用一致的方式展示和恢复。
+协议方面
+
+我设计了一套应用层事件协议，将智能体的规划与执行过程结构化为一系列事件，并通过流式方式推送到前端进行展示
 -->
 
+---
+layout: two-cols
+---
+# 流式协议与任务状态设计
+
+### 任务状态
+
+<div class="ml-5 text-[12px] leading-5">
+
+- waiting_user
+- pending
+- running
+- success
+- fail
+- cancelled
+
+</div>
+
+::right::
+
+
+  <div class="mt-15 flex flex-col gap-8 items-center">
+    <img
+      src="./figures/status_flow.png"
+      alt="任务状态流转"
+      class="w-[125%] max-w-none object-contain"
+    />
+    <img
+      src="./figures/SSE_flow.png"
+      alt="SSE 事件流"
+      class="w-[115%] max-w-none object-contain"
+    />
+  </div>
 ---
 layout: section
 ---
