@@ -823,8 +823,8 @@ Agentic UI 实现
 -->
 
 ---
-layout: center
-class: text-center
+layout: cover
+class: text-center title-end
 ---
 
 # 感谢聆听

@@ -2,11 +2,10 @@
 
 workflow:
   rules:
-    # 对应 GitHub Actions: push branches: [main]
+    # push 到 main 时触发
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
 
-    # 对应 GitHub Actions: workflow_dispatch
-    # GitLab 页面手动 Run pipeline 时会走这个
+    # GitLab 页面手动 Run pipeline 时触发
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "web"'
 
     - when: never
@@ -18,7 +17,7 @@ deploy-pages:
   stage: deploy
   image: node:20
 
-  # 近似对应 GitHub concurrency: group: pages
+  # 类似 GitHub Actions 的 concurrency: group: pages
   resource_group: pages
   interruptible: true
 
@@ -31,7 +30,7 @@ deploy-pages:
 
   script:
     - npm ci --cache .npm --prefer-offline
-    - npx slidev build --base /slidev-demo/
+    - npx slidev build --base /
 
   pages:
     publish: dist
@@ -39,6 +38,3 @@ deploy-pages:
   artifacts:
     paths:
       - dist
-
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
