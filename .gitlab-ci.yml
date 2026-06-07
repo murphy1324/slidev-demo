@@ -5,7 +5,6 @@ workflow:
     # push 到 main 时触发
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"'
 
-    # GitLab 页面手动 Run pipeline 时触发
     - if: '$CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "web"'
 
     - when: never
